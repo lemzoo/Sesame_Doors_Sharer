@@ -83,6 +83,25 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
     }
     
     /**
+     * Methode : getCorrespondingDevice() allow you to get the corresponding device
+     * @param device_id : is the id of the device that you want to get the key
+     * @return device if the device id passed is available on the table
+     */
+    public DeviceLinkingData getCorrespondingDevice(String device_id){
+        DeviceLinkingData device = null;
+        for (int i=0; i<table_device_info.size(); i++){
+            if (table_device_info.get(i).getDeviceId().equals(device_id)){
+                device = table_device_info.get(i).getDeviceLinkingInformation();
+                i = table_device_info.size();
+            }
+            else{
+                device = null;
+            }
+        }
+        return device;
+    }
+    
+    /**
      * Methode : toString print all the identifiant and key saved on the table
      * @return 
      */
@@ -97,8 +116,9 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
         }
         else{
             while (count < table_device_info.size()){
+                String device_number = String.format("%02d", (count +1));
                 chaine += "<---------------------------------------------------->" + "\n";
-                chaine += "Device Number : " +count+1 +  "\n"; 
+                chaine += "Device Number : " + device_number +  "\n"; 
                 chaine += table_device_info.get(count).getDeviceLinkingInformation().toString() + "\n"; 
                 chaine += "Device Id = " + table_device_info.get(count).getDeviceId() + "\n"; 
                 chaine += "Device Key = " + table_device_info.get(count).getDeviceKey() + "\n";

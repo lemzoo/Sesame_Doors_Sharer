@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.Date;
 import javax.swing.JPasswordField;
 /**
@@ -28,10 +27,6 @@ import javax.swing.JPasswordField;
 public class SerialPortGPIO implements ConstantsConfiguration{
     
     private String reception_buffer;
-    private String [] linked_data;
-    private String [] owner_information;
-    private boolean flag_owner_information = false;
-    private boolean flag_linking = false;
     private boolean flag_saving = false;
     private int baudrate = 0;
     private Serial serial;
@@ -115,14 +110,6 @@ public class SerialPortGPIO implements ConstantsConfiguration{
     public Serial getSerial(){
         return this.serial;
     }
-
-    /**
-     * Methode getLinkedFlag()
-     * @return flag_linking
-     */
-    public boolean getLinkedFlag(){
-        return this.flag_linking;
-    }
     
     /**
      * Methode getSavingFlag()
@@ -138,23 +125,6 @@ public class SerialPortGPIO implements ConstantsConfiguration{
      */
     public void setSavingFlag(boolean flag){
         this.flag_saving = flag;
-    }
-    
-    /**
-     * Methode getFlagOwnerInformation()
-     * @return flag_owner_information
-     */
-    public boolean getFlagOwnerInformation(){
-        return this.flag_owner_information;
-    }
-    
-    /**
-     * Methode getConnectionData()
-     * @return linked_data which contains
-     * all the onformation about the new device
-     */
-    public String[] getLinkedData(){
-        return linked_data;
     }
 
     /**
@@ -178,15 +148,6 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         buffer = buffer + data_received;
         buffer = buffer.replace("\n", "").replace("\r", "");
     }
-    
-    /**
-     * Methode getConnectingData()
-     * @return linked_data which contains
-     * all the onformation about the new device
-     */
-    public String[] getOwnerInformation(){
-        return owner_information;
-    }
 
     /**
      * Methode sendData allow you to send data via the uart
@@ -195,10 +156,10 @@ public class SerialPortGPIO implements ConstantsConfiguration{
      */
     public void sendData (String data_to_send) throws InterruptedException{  
         try {
+            Thread.sleep(200);
             // write a simple string to the serial transmit buffer
             serial.writeln(data_to_send);
-            System.out.println("Data sent : " + data_to_send);
-            Thread.sleep(200);
+            System.out.println("Data sent [" + data_to_send + "]");
         }
         catch(IllegalStateException ex){
         }
@@ -218,7 +179,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         while (i<data_to_send.length){
             String [] data_temp = sampleDataToSend(data_to_send[i]);
             for(int j=0;j<data_temp.length;j++){
-                System.out.println("Data sent[" + j + "] = " + data_temp[j]);
+                //System.out.println("Data sent[" + j + "] = " + data_temp[j]);
                 sendData(data_temp[j]);
             }
             i++;
@@ -266,14 +227,16 @@ public class SerialPortGPIO implements ConstantsConfiguration{
      * @return String[] containing all the sampled data
      */
     public static String [] sampleDataToSend(String data_to_send){
-        String [] data_sampled_temp = new String[10];
+        String data_to_send_in = data_to_send;
+        String [] data_sampled_temp = new String[20];
         String [] data_sampled_out;
         
         boolean flag_data = false; 
         String data_to_send_temp = "";
         
-        int size_original = data_to_send.length();
-        char[] charArray = data_to_send.toCharArray();
+        int size_original = data_to_send_in.length();
+        char[] charArray = data_to_send_in.toCharArray();
+        //System.out.println("Char = " + Arrays.toString(charArray));
         int size_rest = 0; 
         int number_char_to_delete = 10;
         int count = 0;
@@ -293,7 +256,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 data_to_send_temp = "";
                 // Extract the character
                 for (int i=0; i<size_rest; i++){
-                    data_to_send_temp = data_to_send_temp + String.valueOf(charArray[i]); 
+                    data_to_send_temp += String.valueOf(charArray[i]); 
                 }
                 //System.out.println("Data extracted = " + data_to_send_temp);
                 data_sampled_temp[count] = data_to_send_temp;
@@ -301,26 +264,24 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                         
                 // delete the character that is extracted
                 StringBuilder sb = new StringBuilder();
-                sb.append(data_to_send);
+                sb.append(data_to_send_in);
                 //System.out.println("StringBuilder = " + sb.toString());
-                //System.out.println("Buffer before = " + data_to_send);
                 sb.delete(0, size_rest);
-                data_to_send = sb.toString();
+                data_to_send_in = sb.toString();
                 //System.out.println("Buffer after = " + data_to_send);
-                charArray = data_to_send.toCharArray();
+                charArray = data_to_send_in.toCharArray();
 
                 if (size_original == size_rest){
                     flag_data = false;
                 }
                 else{
-                    size_original = data_to_send.length();
+                    size_original = data_to_send_in.length();
                     flag_data = true;
                 }
             }
         }
         else{
             count = 0;
-            //System.out.println("Size of the buffer is not superior to 10");
             data_sampled_temp[0] = data_to_send;
         }
         // Extract the valid data on the data_sampled_temp
@@ -331,7 +292,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         data_sampled_out = new String[count_data];
         for(int i=0;i<count_data;i++){
             data_sampled_out[i] = data_sampled_temp[i];
-            System.out.println("Data extraction methode["+i+"] = " + data_sampled_out[i]);
+            //System.out.println("Data extraction methode["+i+"] = " + data_sampled_out[i]);
         }
         
         return data_sampled_out; 
@@ -362,7 +323,6 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 System.err.println("Impossible d'ouvrir le port");
             }
         }
-        //return port_status;
     }
     
     /**
@@ -402,68 +362,60 @@ public class SerialPortGPIO implements ConstantsConfiguration{
      * @throws java.lang.InterruptedException
      */
     public void analyzeDataReceived() throws InterruptedException{
-        //System.out.println("Appel de la methode analyzeDataReceived pour analyser la trame : " + reception_buffer);
         
         switch (reception_buffer) {
             case BONJOUR:
-                System.out.println("Reception de |BONJOUR| en provenance de SESAME");
-                Thread.sleep(200);
+                Thread.sleep(100);
                 sendData(BONJOUR);
-                System.out.println("Envoie de |BONJOUR| vers le SESAME");
-                flag_linking = false;
-                flag_owner_information = false;
+                System.out.println("|BONJOUR| envoyé avec succès");
                 break;
                 
             case DEMANDE_ENREGISTREMENT_PROPRIETAIRE:
-                Thread.sleep(200);
+                Thread.sleep(100);
                 sendData(ENREGISTREMENT_PROPRIETAIRE_AUTORISEE);
-                System.out.println("Envoie de la reponse |Enregistrement Propriétaire Autorisée|");
-                flag_linking = false;
-                flag_owner_information = false;
+                System.out.println("|ENREGISTREMENT_PROPRIETAIRE_AUTORISEE| envoyé avec succès");
                 break;
 
             case DEMANDE_RATTACHEMENT_SESAME:
-                Thread.sleep(200);
+                Thread.sleep(100);
                 sendData(RATTACHEMENT_AUTORISEE_PERIPHERIQUE);
-                System.out.println("Envoie de //Autorisation de Rattachement//");
-                flag_linking = false;
-                flag_owner_information = false;
+                System.out.println("|RATTACHEMENT_AUTORISEE_PERIPHERIQUE| envoyé avec succès");
                 break;
                 
             case DEMANDE_CONFIRMATION_RATTACHEMENT:
-                Thread.sleep(200);
+                Thread.sleep(100);
                 System.out.println("DEMANDE_CONFIRMATION_RATTACHEMENT recu");
                 boolean flag_l = sendLinkingConfirmation();
-                if (flag_l){
-                    System.out.println("Confirmation de rattachement envoyé avec succès");
-                }
-                else{
-                    System.out.println("Confirmation de rattachement non envoyé");
-                }
+                System.out.println("Confirmation de rattachement => Status = " + flag_l);
                 break;
                 
-            case BEGIN:
+            case DEMANDE_ETABLISSEMENT_CONNEXION_ACCES:
                 Thread.sleep(100);
+                sendData(ETABLISSEMENT_CONNEXION_ACCES_ETABLIE);
+                System.out.println("|ETABLISSEMENT_CONNEXION_ACCES_ETABLIE| envoyé avec succès");
+                break;
+                
+                
+            case BEGIN:
+                Thread.sleep(50);
                 System.out.println("Reception de BEGIN");
-                flag_saving = true;
+                //System.out.println("Before resetting the buffer = " + buffer);
                 // reset the buffer
                 buffer = "";
+                //System.out.println("After resetting the buffer = " + buffer);
+                flag_saving = true;
                 break;
                 
             case END:
-                Thread.sleep(100);
+                Thread.sleep(50);
                 System.out.println("Reception de END");
                 flag_saving = false;
                 this.checkBufferData();
                 break;
                 
             case MERCI:
-                System.out.println("Suppression de l'ecouteur sur l'UART");
                 sendData(FIN_DE_LA_COMMUNICATION);
                 System.out.println("Information envoyée avec succès et rajout de l'écouteur");
-                serial.flush();
-                flag_linking = false;
-                flag_owner_information = false;
                 break;
                 
             default:
@@ -583,7 +535,6 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 user.setOwnerIdentifiant(data[12]);
                 JPasswordField pass = new JPasswordField(null, data[13], 0);
                 user.setOwnerPassword(pass);    
-                flag_owner_information = false;
                 System.out.println("Object OwnerInformation is created and all received data is added succesfully");
             }
             else{
@@ -647,7 +598,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
             try{
                 try (FileOutputStream fileOut = new FileOutputStream(file); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
                     out.writeObject(device);
-                    System.out.println("linking_data.ser file is created correcly");
+                    System.out.println("linking_data.ser file is read correctly");
                 }
             }catch(IOException i)
             {
@@ -696,10 +647,9 @@ public class SerialPortGPIO implements ConstantsConfiguration{
             }
             
             // Calcul du checksul
-            checksum_calcule  = (key_size*128) + ((int)(key_size/2))*64 + ((int)(key_size/4))*32; 
-            checksum_calcule += ((int)(key_size/8))*16 + ((int)(key_size/16))*8 + ((int)(key_size/32))*4;
-            checksum_calcule += ((int)(key_size/64))*2;
-            
+            checksum_calcule  = (key_size*128) + (key_size/2)*64 + (key_size/4)*32; 
+            checksum_calcule += (key_size/8)*16 + (key_size/16)*8 + (key_size/32)*4;
+            checksum_calcule += (key_size/64)*2;
             // Test if the checksum is correct or not 
             if (checksum_calcule == checksum_received){
                 System.out.println("CRC Correct");
@@ -709,7 +659,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 try (FileInputStream fileIn = new FileInputStream(file); ObjectInputStream in = new ObjectInputStream(fileIn)) {
                     device_linking = (DeviceLinkingData) in.readObject();
                     System.out.println("Identifiant du device = " + identifiant);
-                    System.out.println("Key = " + key);
+                    System.out.println("Key received = " + key);
                     
                     // Create the DeviceLinkedData class
                     device_linked = new DeviceLinkedData (device_linking, identifiant, key);
@@ -720,52 +670,59 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                     flag = false;
                     System.out.println("IOException : " + i.getMessage());
                 }catch(ClassNotFoundException c){
-                   System.out.println("DeviceLinkingData class not found");
+                   System.out.println("DeviceLinkingData class not found " + c.getMessage());
                    flag =false;
-                }
-                
-                if (flag){
-                    // Make the deserialization of the table file which is the database of the device
-                    file = new File("identifiant_and_key_table.ser");
-                    try (FileInputStream fileIn = new FileInputStream(file); ObjectInputStream in = new ObjectInputStream(fileIn)) {
-                        table_temp = (IdentifiantAndKeyTable) in.readObject();
-                        
-                        // Add the device link information on the table
-                        System.out.println("Content of the table before");
-                        System.out.println(table_temp);
-                        table_temp.addDeviceForLink(device_linked);
-                        System.out.println("Content of the table after");
-                        System.out.println(table_temp);
-                        
-                        flag_serialization = true;
-
-                    }catch(IOException i){
-                        flag_serialization = false;
-                        System.out.println("IOException : " + i.getMessage());
-                    }catch(ClassNotFoundException c){
-                       System.out.println("DeviceLinkingData class not found");
-                       flag_serialization =false;
-                    }
-                }
-                
-                if (flag_serialization){
-                    
-                    // Make the serialization to save the new added device on the table
-                    file = new File("identifiant_and_key_table.ser");
-                    try(FileOutputStream fileOut = new FileOutputStream(file); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-                        out.writeObject(table_temp);
-                        // End of the Serialization for IdentifiantAndKeyTable
-                        System.out.println("Serialized of the new IdentifiantAndKeyTable is saved in identifiant_and_key_table.ser");
-
-                    }catch(IOException io){
-                        System.out.println("Exception for IdentifiantAndKeyTable : " + io.getMessage());
-                        System.out.println("Serialized of the new IdentifiantAndKeyTable is not done : check error");
-                    }
                 }
             }
             else{
                 flag = false;
                 System.out.println("CRC inCorrect");
+            }
+
+            // Check if the flag is correct
+            if (flag){
+                // Make the deserialization of the table file which is the database of the device
+                File file = new File("identifiant_and_key_table.ser");
+                try (FileInputStream fileIn = new FileInputStream(file); ObjectInputStream in = new ObjectInputStream(fileIn)) {
+                    table_temp = (IdentifiantAndKeyTable) in.readObject();
+                    
+                    // Add the device link information on the table
+                    table_temp.addDeviceForLink(device_linked);
+                    System.out.println("Content of the table after");
+                    System.out.println(table_temp);
+                    
+                    flag_serialization = true;
+
+                }catch(IOException i){
+                    flag_serialization = false;
+                    System.out.println("IOException : " + i.getMessage());
+                }catch(ClassNotFoundException c){
+                   System.out.println("DeviceLinkingData class not found");
+                   flag_serialization =false;
+                }
+            }
+            else{
+            	System.out.println("'identifiant_and_key_table.ser' is not found in the current directory");
+            	flag_serialization = false;
+            }
+            
+            // Check if the flag serialization is correct    
+            if (flag_serialization){
+                
+                // Make the serialization to save the new added device on the table
+                File file = new File("identifiant_and_key_table.ser");
+                try(FileOutputStream fileOut = new FileOutputStream(file); ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+                    out.writeObject(table_temp);
+                    // End of the Serialization for IdentifiantAndKeyTable
+                    System.out.println("Serialized of the new IdentifiantAndKeyTable is saved in identifiant_and_key_table.ser");
+
+                }catch(IOException io){
+                    System.out.println("Exception for IdentifiantAndKeyTable : " + io.getMessage());
+                    System.out.println("Serialized of the new IdentifiantAndKeyTable is not done : check error");
+                }
+            }
+            else{
+            	System.out.println("impossible to read the 'identifiant_and_key_table.ser' file or the file is not found");
             }
             
             
@@ -775,7 +732,106 @@ public class SerialPortGPIO implements ConstantsConfiguration{
             flag= false;
         }
 
-        return flag;
+        return flag && flag_serialization;
+    }
+    
+    /**
+     * Methode : checkAccesData() allows you to check the acces data. 
+     * @param data
+     * @return true if the acces is authorized 
+     * @throws java.lang.InterruptedException
+     */
+    public boolean checkAccesData(String [] data) throws InterruptedException {
+        boolean flag_extraction = false;
+        boolean flag_check_id = false;
+        
+        int checksum_received = 0; 
+        int checksum_calcule = 0;
+        
+        String key_gotten = "";
+        String id_gotten  = "";
+        String acces_request = "";
+        
+        DeviceLinkingData device_linking = null;
+        DeviceLinkedData device_linked = null;
+        IdentifiantAndKeyTable table_id_key = null;
+        
+        if (data != null && data.length>=3){
+            id_gotten  = data[0];
+            key_gotten = data[1];
+            acces_request = data[2];
+
+            // Extract the checksum and convert it
+            try{
+                checksum_received = Integer.parseInt(data[3]);
+            }catch(NumberFormatException ex){
+                checksum_received = 0;
+                System.out.println("Impossible de convert String to Intger : " + ex.getMessage());
+            }
+            
+            
+            // Calcul du checksul
+            checksum_calcule = id_gotten.length()*1024 + key_gotten.length()*512 + acces_request.length()*256;
+            
+            // Test if the checksum is correct or not 
+            if (checksum_calcule == checksum_received){
+                System.out.println("CRC Correct");
+                
+                // Make the deserialization of the table file which is the database of the device
+                File file = new File("identifiant_and_key_table.ser");
+                try (FileInputStream fileIn = new FileInputStream(file); ObjectInputStream in = new ObjectInputStream(fileIn)) {
+                    table_id_key = (IdentifiantAndKeyTable) in.readObject();
+                    
+                    flag_extraction = true;
+
+                }catch(IOException i){
+                    flag_extraction = false;
+                    System.out.println("IOException : " + i.getMessage());
+                }catch(ClassNotFoundException c){
+                   System.out.println("DeviceLinkingData class not found");
+                   flag_extraction =false;
+                }
+            }
+            else{
+                flag_extraction = false;
+                System.out.println("CRC inCorrect");
+            }
+            
+            // Check if the extraction is done succesfully
+            if (flag_extraction){
+                // Got the key registered which corresponding to the id Sesame
+                String key_registered = table_id_key.getCorrespondingKey(id_gotten);
+                if (key_registered.equals(key_gotten)){
+                    System.out.println("The id of the device is correct");
+                    flag_check_id = true;
+                    // Check the acces_require
+                    if (acces_request.equals(OUVRIR)){
+                        System.out.println("Serrure ouverte");
+                    }
+                    else if(acces_request.equals(FERMER)){
+                        System.out.println("Serrure fermée");
+                    }
+                    else{
+                        // Nothing
+                        System.out.println("Nothing to do");
+                    }
+                }
+                else{
+                    System.out.println("The id of the device is correct");
+                    flag_check_id = true;
+                }
+                
+            }
+            else{
+                // Nothing
+            }
+            
+        }
+        else{
+            System.out.println("L'argument passé en paramètre est invalide");
+        }
+
+        return flag_extraction && flag_check_id;
     }
 
     
@@ -790,11 +846,11 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         String [] data_in = new String[100];
         String [] data_out;
         
+        System.out.println("Buffer = " + string_buffer);
+        
         //Check the data saved in the buffer
         int buffer_size = string_buffer.length();
-        System.out.println("Size of the buffer : " + buffer_size);
-        System.out.println("Buffer = " + string_buffer);
-       
+        //System.out.println("Size of the buffer : " + buffer_size);       
         
         // Put the buffer contents in the char Array
         char[] charArray = string_buffer.toCharArray();
@@ -806,7 +862,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
 
         // Extract the first size of the first frame
         temp = String.valueOf(charArray[count]) + String.valueOf(charArray[count+1]);
-        count = count + 2;
+        count += 2;
         System.out.println("Premier Temp = " + temp);
         int size_charactere = 0;
         try{
@@ -826,7 +882,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 //System.out.println("Temp = " + temp);
             }
             data_in[size] = temp;
-            System.out.println("Data extracted["+size+"] = " + data_in[size]);
+            //System.out.println("Data extracted["+size+"] = " + data_in[size]);
             size ++;
             
             // Check if you have got the end of the buffer to stop extracting
@@ -836,7 +892,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
             else{
                 temp = String.valueOf(charArray[count + size_charactere]) + String.valueOf(charArray[count + size_charactere+1]);                
                 
-                System.out.println("Size futur data = " + temp);
+                //System.out.println("Size futur data = " + temp);
                 count = count + size_charactere + 2;
                 try{
                     size_charactere = Integer.parseInt(temp);
@@ -855,7 +911,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         data_out = new String[count_data];
         for(int i=0;i<count_data;i++){
             data_out[i] = data_in[i];
-            System.out.println("Data extraction methode["+i+"] = " + data_out[i]);
+            //System.out.println("Data extraction methode["+i+"] = " + data_out[i]);
         }
         System.out.println("<--- END OF THE extractBufferData() methode --->");
         return data_out; 
@@ -883,7 +939,6 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 flag = saveOwnerInformation(data);
                 System.out.println("After calling saveOwnerInformation()");
                 
-                System.out.println("CheckSavedData() is called = " + flag);
                 if(flag){
                     System.out.println("The data is saved correctly");
                     Thread.sleep(1000);
@@ -912,60 +967,73 @@ public class SerialPortGPIO implements ConstantsConfiguration{
                 flag = saveLinkingData(data);
                 System.out.println("After calling saveLinkingDevice()");
                 
-                System.out.println("CheckSavedData() is called = " + flag);
+                System.out.println("statut of calling saveLinkingData() = " + flag);
+                
                 if(flag){
-                    System.out.println("The data about the linking is saved correctly");
                     Thread.sleep(1000);
                     this.sendData(SESAME_RATTACHE_CORRECTEMENT);
+                    System.out.println("|SESAME_RATTACHE_CORRECTEMENT| is sent to the SESAME");
                 }
                 else{
-                    System.out.println("The data is not saved because it contains some invalid data");
                     Thread.sleep(1000);
                     this.sendData(DONNEES_SESAME_RECUES_ERONNEES);
+                    System.out.println("|DONNEES_SESAME_RECUES_ERONNEES| is sent to the SESAME because of some invalid data");
                 }
             }
-            else{
-                System.out.println("The data is not saved because it contains some invalid data");
-                Thread.sleep(1000);
-                this.sendData(DONNEES_SESAME_RECUES_ERONNEES);
-                System.out.println(" le buffer est invalide");
-                flag = false;
-            }   
         }
-        //===>
+        // ADD Device on the table which containing identifiant and key
         else if ((first_data != null && first_data.equals(DEBUT_ENVOIE_KEY_LINK)) && 
                  (last_data  != null  && last_data.equals(FIN_ENVOIE_KEY_LINK))){
             System.out.println("First if");
             if(data != null){
                 
                 System.out.println("Before calling add device on the table class");
-                //flag = addDeviceLink(data)
+                flag = addDeviceLink(data);
                 System.out.println("After calling add device on the table class");
                 
                 System.out.println("Appel de la methode pour la sauvegarde = " + flag);
                 if(flag){
-                    System.out.println("The data about the key is saved correclty");
                     Thread.sleep(1000);
                     this.sendData(KEY_LINK_ENREGISTREE_CORRECTEMENT);
+                    System.out.println("|KEY_LINK_ENREGISTREE_CORRECTEMENT| is sent to the SESAME because the key is saved correclty");
                 }
                 else{
-                    System.out.println("The data is not saved because it contains some invalid data");
                     Thread.sleep(1000);
                     this.sendData(KEY_LINK_DONNEES_ERONNEES);
+                    System.out.println("|KEY_LINK_DONNEES_ERONNEES| is sent to the SESAME because of the key is invalide");
                 }
             }
-            else{
-                System.out.println("The data is not saved because it contains some invalid data");
-                Thread.sleep(1000);
-                this.sendData(KEY_LINK_DONNEES_ERONNEES);
-                System.out.println(" le buffer est invalide");
-                flag = false;
-            }   
         }
+        // ===>
+        // ADD Device on the table which containing identifiant and key
+        else if ((first_data != null && first_data.equals(DEBUT_ENVOIE_DONNEES_ACCES)) && 
+                 (last_data  != null  && last_data.equals(FIN_ENVOIE_DONNEES_ACCES))){
+            System.out.println("First if");
+            if(data != null){
+                
+                System.out.println("Before calling check data to authorize the acces");
+                flag = checkAccesData(data);
+                System.out.println("After calling check data to authorize the acces");
+                
+                System.out.println("Appel de la methode pour la vérification de l'accès = " + flag);
+                if(flag){
+                    Thread.sleep(1000);
+                    this.sendData(DEMANDE_ACCES_AUTORISEE);
+                    System.out.println("|DEMANDE_ACCES_AUTORISEE| is sent to the SESAME because the key is saved correclty");
+                }
+                else{
+                    Thread.sleep(1000);
+                    this.sendData(DEMANDE_ACCES_REFUSEE);
+                    System.out.println("|DEMANDE_ACCES_REFUSEE| is sent to the SESAME because of the key is invalide");
+                }
+            }
+        }
+        // ===>
         else{
             flag = false;
             System.out.println("First Else ");
         }
+        
         System.out.println("<--- END OF THE checkSavedData() methode -->");
         return flag; 
     }
@@ -980,18 +1048,21 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         // Get the data saved in the buffer
         String [] data_in = SerialPortGPIO.extractBufferData(buffer);
         
+        System.out.println("The buffer is resetted");
+        buffer = "";
+        
         // Extract the first and last data to check the kind of request
         String first_data = data_in[0];
         String last_data  = data_in[data_in.length - 1];
         
         System.out.println("First = " + first_data);
-        System.out.println("Last = " + last_data);
+        System.out.println("Last  = " + last_data);
         
         // Extract only the data about the request
         String [] data_temp = new String[data_in.length -2];
         for (int i=0; i<data_temp.length; i++){
             data_temp[i] = data_in[i+1];
-            System.out.println("Only the Data["+i+"] = " + data_temp[i]);
+            System.out.println("Valide data["+i+"] = " + data_temp[i]);
         }
         
         // Call the checkSavedData() methode to identify the kind of request
@@ -1006,7 +1077,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
      * @throws java.lang.InterruptedException
      */
     public boolean sendLinkingConfirmation() throws InterruptedException{
-        System.out.println("<<=== BEGIN : sendLinkingConfirmation ===>>");
+        System.out.println("<--- BEGIN : sendLinkingConfirmation --->");
         boolean flag = false;
         DeviceLinkingData dev = null;
         String [] confirmation_rattachement = new String[4];
@@ -1020,16 +1091,15 @@ public class SerialPortGPIO implements ConstantsConfiguration{
             
             // Calcul the identifiant of the device
             identifiant = dev.makeDeviceIdentifiant();
-            
+           
+            int formule = identifiant.length()*128;
+
             // Make the table for the linking confirmation
             confirmation_rattachement[0] = DEBUT_ENVOIE_CONFIRMATION_RATTACHEMENT;
             confirmation_rattachement[1] = identifiant;
-            int formule = identifiant.length()*128;
             confirmation_rattachement[2] = Integer.toString(formule);
             confirmation_rattachement[3] = FIN_ENVOIE_CONFIRMATION_RATTACHEMENT;
 
-            // send the linking confirmation
-            sendData(confirmation_rattachement);
             flag = true;
             
         }catch(IOException i){
@@ -1039,7 +1109,16 @@ public class SerialPortGPIO implements ConstantsConfiguration{
            System.out.println("DeviceLinkingData class not found");
            flag =false;
         }
-        System.out.println("<<=== END   : sendLinkingConfirmation ===>>");
+
+        if (flag){
+        	// send the linking confirmation
+            sendData(confirmation_rattachement);
+            System.out.println("Identifiant of the Peripherique is sent to the Sesame");
+        }
+        else{
+            System.out.println("Identifiant of the Peripherique is not sent to the Sesame");
+        }
+        System.out.println("<--- END   : sendLinkingConfirmation --->");
 
         return flag;
     }
@@ -1055,7 +1134,7 @@ public class SerialPortGPIO implements ConstantsConfiguration{
         int count = 0;
         
         while (true){
-            if (count<10){
+            if (count<5){
                 System.out.println("Count SESAME DOORS = " + count);
             }
             count ++;

@@ -44,6 +44,18 @@ public interface ConstantsConfiguration {
     final String KEY_LINK_ENREGISTREE_CORRECTEMENT = "KLEC_01";
     final String KEY_LINK_DONNEES_ERONNEES   = "KLDE_01";
     
+    final String DEMANDE_ETABLISSEMENT_CONNEXION_ACCES = "DECA_02";
+    final String ETABLISSEMENT_CONNEXION_ACCES_ETABLIE = "ECAE_02";
+    
+    final String DEBUT_ENVOIE_DONNEES_ACCES = "DEDA_02";
+    final String FIN_ENVOIE_DONNEES_ACCES   = "FEDA_02";
+    
+    final String DEMANDE_ACCES_AUTORISEE = "DAA_02";
+    final String DEMANDE_ACCES_REFUSEE   = "DAR_02";
+    
+    final String OUVRIR = "ON_02";
+    final String FERMER = "OFF_02";
+    
     final String AUTRE_DEMANDE = "AD_01";
     final String MERCI = "MI_01";
     final String FIN_DE_LA_COMMUNICATION = "FC_01";

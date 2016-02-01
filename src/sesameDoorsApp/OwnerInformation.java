@@ -47,8 +47,8 @@ public class OwnerInformation implements java.io.Serializable {
     }
     
     public OwnerInformation (boolean flag){
-        nom = "EveryGates";
-        prenom = "SAS";
+        nom = "TAGU";
+        prenom = "Flaubert";
         date_naissance = new Date(2015, 8, 9);
         numero_mobile = "06 51 58 75 08";
         adresse_mail = "lamine.ba@everygates.com";
@@ -63,7 +63,7 @@ public class OwnerInformation implements java.io.Serializable {
                   String.valueOf(date_naissance.getYear()).charAt(3)+
                   String.valueOf(numero_mobile.charAt(7)) + String.valueOf(numero_mobile.charAt(9));
 
-        password = new JPasswordField(null,"raspberry",0);
+        password = new JPasswordField(null,"a",0);
         System.out.println("Owner Information is setted with the correct data");
     }
     

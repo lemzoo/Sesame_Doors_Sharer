@@ -38,7 +38,7 @@ public class UARTListener implements SerialDataListener, ConstantsConfiguration 
                 received_data = received_data + String.valueOf(charArray[i]); 
                 received_data = received_data.replace("\n", "").replace("\r", "");
             }
-            System.out.println("received_data = " + received_data);
+            System.out.println("received_data = [" + received_data + "]");
             
             /* 
              * Check if the rattachement flag is true. if the flag is true, copy the RX Data on the table
@@ -65,15 +65,13 @@ public class UARTListener implements SerialDataListener, ConstantsConfiguration 
                 }
             }
             else{
-                /*counter_linked = 0;
-                counter_owner_information = 0;*/
-                System.out.println("Else de l'UART SESAME DOORS");
-                uart.setDataBufferReception(received_data);
+                //System.out.println("Else de l'UART SESAME DOORS et Data received = ["+received_data+"]");
+                /*uart.setDataBufferReception(received_data);
                 try {
                     uart.analyzeDataReceived();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(UARTListener.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
             }
         }
         else{
