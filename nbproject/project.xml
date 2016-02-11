@@ -6,7 +6,7 @@
             <extension file="remote-platform-impl.xml" id="remote-platform-1"/>
         </buildExtensions>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>SESAME_DOORS_V1</name>
+            <name>SESAME_DOORS_SHARER</name>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

@@ -126,7 +126,7 @@ public class MainTestClass {
         String identifiant = "SESAME DOORS";
         String key = "AZERTYUIOPQSDKFGFGKFGJkfgjsdffsdjfsdkfjdsAZSQAZSQWXCDFRTGHVBCFDjshfjsdfksdfjdsfhsdjfdjfkjqkfjqfhqjdfjdjfdjfhdsjfhsdjfdskfjsdkf";
         
-        DeviceLinkedData device_linked = new DeviceLinkedData (device_linking, identifiant, key);
+        DeviceLinkedData device_linked = null; //new DeviceLinkedData (device_linking, key);
         
         IdentifiantAndKeyTable table_temp = null;
         // Deserialization 

@@ -24,15 +24,15 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
      * @param device
      */
     public void addDeviceForLink(DeviceLinkedData device){
-        DeviceLinkingData dev;
+        OwnerInformation user_info;
         String id;
         String key;
         
         if (device != null){
-            dev = (DeviceLinkingData)(device.getDeviceLinkingInformation());
+            user_info = (OwnerInformation)(device.getDeviceOwnerInformation());
             id = (String)(device.getDeviceId());
             key = (String)(device.getDeviceKey());
-            DeviceLinkedData devi = new DeviceLinkedData(dev, id, key);
+            DeviceLinkedData devi = new DeviceLinkedData(user_info, key);
             table_device_info.add(devi);
             
         }
@@ -83,22 +83,22 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
     }
     
     /**
-     * Methode : getCorrespondingDevice() allow you to get the corresponding device
+     * Methode : getCorrespondingUser() allow you to get the corresponding user
      * @param device_id : is the id of the device that you want to get the key
-     * @return device if the device id passed is available on the table
+     * @return OwnerInformation if the device id passed is available on the table
      */
-    public DeviceLinkingData getCorrespondingDevice(String device_id){
-        DeviceLinkingData device = null;
+    public OwnerInformation getCorrespondingUser(String device_id){
+        OwnerInformation user = null;
         for (int i=0; i<table_device_info.size(); i++){
             if (table_device_info.get(i).getDeviceId().equals(device_id)){
-                device = table_device_info.get(i).getDeviceLinkingInformation();
+                user = table_device_info.get(i).getDeviceOwnerInformation();
                 i = table_device_info.size();
             }
             else{
-                device = null;
+                user = null;
             }
         }
-        return device;
+        return user;
     }
     
     /**
@@ -119,7 +119,7 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
                 String device_number = String.format("%02d", (count +1));
                 chaine += "<---------------------------------------------------->" + "\n";
                 chaine += "Device Number : " + device_number +  "\n"; 
-                chaine += table_device_info.get(count).getDeviceLinkingInformation().toString() + "\n"; 
+                chaine += table_device_info.get(count).getDeviceOwnerInformation().toString() + "\n"; 
                 chaine += "Device Id = " + table_device_info.get(count).getDeviceId() + "\n"; 
                 chaine += "Device Key = " + table_device_info.get(count).getDeviceKey() + "\n";
                 count ++;
@@ -160,30 +160,30 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
  */
 class DeviceLinkedData implements java.io.Serializable {
 
-     private DeviceLinkingData device_info;
+     private OwnerInformation device_user;
      private String device_id;
      private String device_key;
 
-    public DeviceLinkedData(DeviceLinkingData device, String id, String key) {
-        this.device_info = device;
-        this.device_id   = id;
+    public DeviceLinkedData(OwnerInformation user, String key) {
+        this.device_user = user;
+        this.device_id   = user.getOwnerIdentifiant();
         this.device_key  = key;
     }
 
     /**
-     * Methode : getDeviceId() allow you to get the information about the linked device
+     * Methode : getDeviceOwnerInformation() allow you to get the information about the owner of the device
      * @return device_info
      */
-    public DeviceLinkingData getDeviceLinkingInformation() {
-        return this.device_info;
+    public OwnerInformation getDeviceOwnerInformation() {
+        return this.device_user;
     }
     /**
-     * Methode setDeviceLinkingInformation() allow you to set the information about the device
+     * Methode setDeviceOwnerInformation() allow you to set the information about the device
      * @param device_info 
      */
-    public void setDeviceLinkingInformation(DeviceLinkingData device_info) {
-        if (device_info != null){
-            this.device_info = device_info;
+    public void setDeviceOwnerInformation(OwnerInformation user_info) {
+        if (user_info != null){
+            this.device_user = user_info;
         }
         else{
             System.out.println("La classe passée en paramètre est null");

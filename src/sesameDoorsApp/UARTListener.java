@@ -20,7 +20,7 @@ public class UARTListener implements SerialDataListener, ConstantsConfiguration 
     
     public UARTListener(SerialPortGPIO uart){
             this.uart = uart;
-            received_data = "Raspberry";
+            //received_data = "";
     }
 
     /**
