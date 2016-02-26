@@ -1,100 +1,65 @@
-//Peripherique
-
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This class contains all information about the owner of the SESAME. 
  */
 package sesameDoorsApp;
 
+
 import java.util.Date;
-import javax.swing.JPasswordField;
 
 /**
- *
+ * Classe OwnerInformation create an object which contains all data about the owner of the Sesame and 
+ * the object create a identity. 
  * @author LamineBA
  */
-public class OwnerInformation implements java.io.Serializable {
-    private String nom;
-    private String prenom;
-    private Date date_naissance;
-    private String numero_mobile;
-    private String adresse_mail;
-    private int numero_voie;
-    private String nom_voie;
-    private int code_postale;
-    private String ville;
-    private String pays;
+public class OwnerInformation extends UserIdentification implements java.io.Serializable {
+
     private String user_id;
-    private JPasswordField password;
+    private String password;
     
-    public OwnerInformation (){
-        nom = "";
-        prenom = "";
-        date_naissance = null;
-        numero_mobile = "";
-        adresse_mail = "";
-        numero_voie = 0;
-        nom_voie = "";
-        code_postale = 0;
-        ville = "";
-        pays = "";
-        user_id = "";
-
-        password = new JPasswordField(null,"",0);
-
-        System.out.println("Owner Information is setted by empty data");
-    }
-    
-    public OwnerInformation (boolean flag){
-        nom = "TAGU";
-        prenom = "Flaubert";
-        date_naissance = new Date(2015, 8, 9);
-        numero_mobile = "06 51 58 75 08";
-        adresse_mail = "lamine.ba@everygates.com";
-        numero_voie = 2;
-        nom_voie = "Avenue du Petit Albert";
-        code_postale = 92220;
-        ville = "Bagneux";
-        pays = "France";
-        user_id = String.valueOf(nom.charAt(0)) + String.valueOf(prenom.charAt(0)) +
-                  String.valueOf(date_naissance.getDate())+ 
-                  String.valueOf(date_naissance.getMonth()) + 
-                  String.valueOf(date_naissance.getYear()).charAt(3)+
-                  String.valueOf(numero_mobile.charAt(7)) + String.valueOf(numero_mobile.charAt(9));
-
-        password = new JPasswordField(null,"a",0);
-        System.out.println("Owner Information is setted with the correct data");
-    }
-    
-    @Override
-    public String toString(){
-        String chaine = "... Nom : " + nom + " ...\n" + 
-                        "... Prenom : " + prenom + " ...\n" +
-                        "... Date de naissance : " + date_naissance.getDay() + "-" + date_naissance.getMonth() + "-" + date_naissance.getYear() + "...\n" + 
-                        "... Numero de telephone : " + numero_mobile + " ...\n" +
-                        "... Adresse : " + numero_voie + " " + nom_voie + " ...\n" +
-                        "...           " + ville + ", " + pays + " ...\n"; 
-        
-        return "... Les informations à propos du rattachement ...\n" + chaine;
+    /**
+     * Constructor "OwnerInformation" 
+     * @param data contains all data about the owner except the identity and password of the owner
+     */
+    public OwnerInformation (String [] data){
+        super(data);
+        password = "a";
+        user_id = String.valueOf(super.getUserFirstName().charAt(0)) + String.valueOf(super.getUserLastName().charAt(0)) +
+                  String.valueOf(super.getUserBirthdayDate().getDate())+ String.valueOf(super.getUserBirthdayDate().getMonth()) + String.valueOf(super.getUserBirthdayDate().getYear()).charAt(3)+
+                  String.valueOf(super.getUserPhoneNumber().charAt(7)) + String.valueOf(super.getUserPhoneNumber().charAt(9));
     }
     
     /**
-     * Methode getOwnerFirstName()
+     * Constructor "OwnerInformation" without aragument is used only for the deserialization
+     */
+    public OwnerInformation(){
+        super();
+    }
+    @Override
+    public String toString(){
+        String chaine = super.toString();
+        chaine +=   "..... Information complémentaire ......" + "\n" + 
+                    "..... Identifiant de l'utilisateur  : " + user_id + " ....." + "\n" + 
+                    "..... Mot de passe de l'utilisateur : " + password + " ....." + "\n"+
+                    "...................................................";
+        return chaine;
+    }
+    
+    /**
+     * Methode getUserFirstName()
      * This methode returns the first name of the user who is the 
      * owner of the SESAME. 
      * Returned type : String
      * @return nom
      */
     public String getOwnerFirstName(){
-        return this.nom;
+        return super.getUserFirstName();
     }
     /**
      * Methode setOwnerFirstName(String first_name)
      * @param data
      */
     public void setOwnerFirstName(String data){
-        this.nom = data;
+        super.setUserFirstName(data);
     }
     
     /**
@@ -105,14 +70,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return prenom
      */
     public String getOwnerLastName(){
-        return this.prenom;
+        return super.getUserLastName();
     }
     /**
      * Methode setOwnerLastName(String last_name)
      * @param last_name 
      */
     public void setOwnerLastName(String last_name){
-        this.prenom = last_name;
+        super.setUserLastName(last_name);
     }
     
     /**
@@ -123,14 +88,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return date_naissance
      */
     public Date getOwnerBirthdayDate(){
-        return this.date_naissance;
+        return super.getUserBirthdayDate();
     }
     /**
      * Methode getOwnerBirthdayDate(Data date)
      * @param date 
      */
     public void setOwnerBirthdayDate(Date date){
-        this.date_naissance = date;
+        super.setUserBirthdayDate(date);
     }
     
     /**
@@ -141,14 +106,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return numero_mobile
      */
     public String getOwnerPhoneNumber(){
-        return this.numero_mobile;
+        return super.getUserPhoneNumber();
     }
     /**
      * Methode setOwnerPhoneNumber(String phone_number)
      * @param phone_number 
      */
     public void setOwnerPhoneNumber(String phone_number){
-        this.numero_mobile = phone_number;
+        super.setUserPhoneNumber(phone_number);
     }
     
     /**
@@ -159,14 +124,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return adresse_mail
      */
     public String getOwnerEmailAddress(){
-        return this.adresse_mail;
+        return super.getUserEmailAddress();
     }
     /**
      * Methode setOwnerEmailAddress(String email_address)
      * @param email_address 
      */
     public void setOwnerEmailAddress(String email_address){
-        this.adresse_mail = email_address;
+        super.setUserEmailAddress(email_address);
     }
     
     /**
@@ -177,14 +142,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return numero_voie
      */
     public int getOwnerStreetNumber(){
-        return this.numero_voie;
+        return super.getUserStreetNumber();
     }
     /**
      * Methode setOwnerStreetNumber(int street_number)
      * @param street_number 
      */
     public void setOwnerStreetNumber(int street_number){
-        this.numero_voie = street_number;
+        super.setUserStreetNumber(street_number);
     }
     
     /**
@@ -195,14 +160,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return nom_voie
      */
     public String getOwnerStreetName(){
-        return this.nom_voie;
+        return super.getUserStreetName();
     }
     /**
      * Methode setOwnerStreetName(String street_name)
      * @param street_name 
      */
     public void setOwnerStreetName(String street_name){
-        this.nom_voie = street_name;
+        super.setUserStreetName(street_name);
     }
     
     /**
@@ -213,14 +178,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return code_postale
      */
     public int getOwnerCodePostale(){
-        return this.code_postale;
+        return super.getUserCodePostale();
     }
     /**
      * Methode setOwnerCodePostale(int postale_code)
      * @param postale_code 
      */
     public void setOwnerCodePostale(int postale_code){
-        this.code_postale = postale_code;
+        super.setUserCodePostale(postale_code);
     }
     /**
      * Methode getOwnerCity()
@@ -230,14 +195,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return ville
      */
     public String getOwnerCity(){
-        return this.ville;
+        return super.getUserCity();
     }
     /**
      * Methode setOwnerCity(String city)
      * @param city 
      */
     public void setOwnerCity(String city){
-        this.ville = city;
+        super.setUserCity(city);
     }
     
     /**
@@ -248,14 +213,14 @@ public class OwnerInformation implements java.io.Serializable {
      * @return pays
      */
     public String getOwnerCountry(){
-        return this.pays;
+        return super.getUserCountry();
     }
     /**
      * Methode setOwnerCountry(String country)
      * @param country 
      */
     public void setOwnerCountry(String country){
-        this.pays = country;
+        super.setUserCountry(country);
     }
     
     /**
@@ -280,22 +245,57 @@ public class OwnerInformation implements java.io.Serializable {
      * Methode getOwnerPassword()
      * This methode returns the password typed by the user who is the 
      * owner of the SESAME. 
-     * Returned type : JPasswordField
+     * Returned type : String
      * @return password
      */
-    public JPasswordField getOwnerPassword(){
+    public String getOwnerPassword(){
         return this.password;
     }
     /**
      * Methode setOwnerPassword(pass)
      * This methode sets the new password of the user who is the 
      * owner of the SESAME.
-     * @arg type : JPasswordField
+     * @arg type : String
      * @param pass
      */
-    public void setOwnerPassword(JPasswordField pass){
+    public void setOwnerPassword(String pass){
         this.password = pass;
     }
     
+    /**
+     * Methode getOwnerInformationForLinking() allow you to get the data about the owner of the Sesame
+     * for the linking with the Sesame Doors
+     * @return String[] which contains the data
+     */
+    public String [] getOwnerInformationForLinking(){
+        String [] data_temp = super.getUserInformation();
+        int size_data = data_temp.length;
+        String [] data_out = new String[size_data + 2];
+        System.arraycopy(data_temp, 0, data_out, 0, size_data);
+        data_out[size_data] = user_id;
+        data_out[size_data+1] = password;
+        // End of the arrange data
+        
+        return data_out;
+    }
+    
+    /**
+     * Methode getOwnerInformationForSharing() allow you to get the data about the owner of the Sesame
+     * for linking with another Sesame
+     * @return String[] which contains the data
+     */
+    public String [] getOwnerInformationForSharing(){
+        return super.getUserInformation();
+    }
+    
     private static final long serialVersionUID = 42L; 
+    
+    public static void main (String [] args){
+        String [] data = null;
+        UserIdentification user = new UserIdentification(data);
+        System.out.println(user);
+        System.out.println("<---------------------------------------->");
+        OwnerInformation owner = new OwnerInformation(data);
+        System.out.println(owner);
+    }
 }

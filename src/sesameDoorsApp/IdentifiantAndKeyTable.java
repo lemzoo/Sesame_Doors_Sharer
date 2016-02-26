@@ -24,15 +24,18 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
      * @param device
      */
     public void addDeviceForLink(DeviceLinkedData device){
-        OwnerInformation user_info;
+        OwnerInformation user;
+        DeviceLinkingData dev;
         String id;
         String key;
         
         if (device != null){
-            user_info = (OwnerInformation)(device.getDeviceOwnerInformation());
+            user = (OwnerInformation)device.getOwnerInformation();
+            dev = (DeviceLinkingData)(device.getDeviceLinkingInformation());
             id = (String)(device.getDeviceId());
             key = (String)(device.getDeviceKey());
-            DeviceLinkedData devi = new DeviceLinkedData(user_info, key);
+            
+            DeviceLinkedData devi = new DeviceLinkedData(user, dev, id, key);
             table_device_info.add(devi);
             
         }
@@ -91,7 +94,7 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
         OwnerInformation user = null;
         for (int i=0; i<table_device_info.size(); i++){
             if (table_device_info.get(i).getDeviceId().equals(device_id)){
-                user = table_device_info.get(i).getDeviceOwnerInformation();
+                user = table_device_info.get(i).getOwnerInformation();
                 i = table_device_info.size();
             }
             else{
@@ -119,7 +122,7 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
                 String device_number = String.format("%02d", (count +1));
                 chaine += "<---------------------------------------------------->" + "\n";
                 chaine += "Device Number : " + device_number +  "\n"; 
-                chaine += table_device_info.get(count).getDeviceOwnerInformation().toString() + "\n"; 
+                chaine += table_device_info.get(count).getOwnerInformation().toString() + "\n"; 
                 chaine += "Device Id = " + table_device_info.get(count).getDeviceId() + "\n"; 
                 chaine += "Device Key = " + table_device_info.get(count).getDeviceKey() + "\n";
                 count ++;
@@ -131,94 +134,23 @@ public class IdentifiantAndKeyTable implements java.io.Serializable {
     
     private static final long serialVersionUID = 42L; 
     
-    /*public static void main (String [] args){
+    public static void main (String [] args){
         IdentifiantAndKeyTable id = new IdentifiantAndKeyTable();
         String ide = "SESAME DOORS";
         String key = "AZERTYUIOP";
         String [] data = {"Maison", "Proprietaire", "Rez de Chaussee", "Porte d'entree principale", "Ma residence principale",
                           "13", "Avenue Maximilien Robespierre", "94400", "Vitry sur Seine", "France"};
         DeviceLinkingData dev = new DeviceLinkingData(data);
-        id.addDeviceForLink(dev, ide, key);
+        //id.addDeviceForLink(dev, ide, key);
         
         ide = "SESAME HAND";
         key = "QSDFGHJKLM";
-        id.addDeviceForLink(dev, ide, key);
+        //id.addDeviceForLink(dev, ide, key);
         
         ide = "SESAME CAR";
         key = "WXCVBN";
-        id.addDeviceForLink(dev, ide, key);
+        //id.addDeviceForLink(dev, ide, key);
         
         System.out.println(id);   
-    }*/
-}
-
-/**
- * Class : DeviceLinkedData() it's a class which contains the information of the device. 
- * -> Attributs : device_info, device_id, device_key. 
- * -> Methode : accessors get and set of the attribut. 
- * @author LamineBA
- */
-class DeviceLinkedData implements java.io.Serializable {
-
-     private OwnerInformation device_user;
-     private String device_id;
-     private String device_key;
-
-    public DeviceLinkedData(OwnerInformation user, String key) {
-        this.device_user = user;
-        this.device_id   = user.getOwnerIdentifiant();
-        this.device_key  = key;
     }
-
-    /**
-     * Methode : getDeviceOwnerInformation() allow you to get the information about the owner of the device
-     * @return device_info
-     */
-    public OwnerInformation getDeviceOwnerInformation() {
-        return this.device_user;
-    }
-    /**
-     * Methode setDeviceOwnerInformation() allow you to set the information about the device
-     * @param device_info 
-     */
-    public void setDeviceOwnerInformation(OwnerInformation user_info) {
-        if (user_info != null){
-            this.device_user = user_info;
-        }
-        else{
-            System.out.println("La classe passée en paramètre est null");
-        }
-    }
-    
-    /**
-     * Methode : getDeviceId() allow you to get the Id of the device
-     * @return device_id
-     */
-    public String getDeviceId() {
-        return this.device_id;
-    }
-    /**
-     * Methode setDeviceId() allow you to set the id of the device
-     * @param id 
-     */
-    public void setDeviceId(String id) {
-        this.device_id = id;
-    }
-    
-    /**
-     * Methode : getDeviceKey() allow you to get the key of the device
-     * @return device_key
-     */
-    public String getDeviceKey() {
-        return this.device_key;
-    }
-    /**
-     * Methode setDeviceKey() allow you to set the key of the device
-     * @param key 
-     */
-    public void setDeviceKey(String key) {
-        this.device_key = key;
-    }
-    
-    private static final long serialVersionUID = 42L; 
 }

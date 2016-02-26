@@ -36,7 +36,7 @@ public class DeviceLinkingData implements java.io.Serializable{
         device_identifiant = "";
     }
     public DeviceLinkingData(String [] data){
-        if (data != null && data.length>0){
+        if (data != null && data.length >= 10){
             type_de_bien = data[0]; 
             type_appartenance = data[1]; 
             emplacement = data[2]; 
@@ -47,6 +47,11 @@ public class DeviceLinkingData implements java.io.Serializable{
             //code_postale = Integer.parseInt(data[7]);
             ville = data[8];
             pays = data[9];  
+            
+            if (data.length >= 11)
+                device_identifiant = data[10];
+            else
+                device_identifiant = "";
             
             try{
                 numero_voie = Integer.parseInt(data[5]);
@@ -184,6 +189,28 @@ public class DeviceLinkingData implements java.io.Serializable{
      */
     public String getPays(){
         return this.pays;
+    }
+    
+    /**
+     * Methode getDeviceLinkingData() allow you to get arranged data which is ready for sending
+     * @return [] String containing all attribut of the class
+     */
+    public String [] getDeviceLinkingData(){
+        String [] data = new String[10];
+        
+        data[0] = type_de_bien;
+        data[1] = type_appartenance;
+        data[2] = emplacement;
+        data[3] = type_porte;
+        data[4] = commentaire;
+        data[5] = Integer.toString(numero_voie);
+        data[6] = nom_voie;
+        data[7] = Integer.toString(code_postale);
+        data[8] = ville;
+        data[9] = pays;
+        //data[10] = device_identifiant;
+        
+        return data;
     }
     
     private static final long serialVersionUID = 42L; 

@@ -94,7 +94,41 @@ public interface ConstantsConfiguration {
     
     final String INFORMATION_ACCREDITE_ENREGISTRE_CORRECTEMENT = "IAEC_03";
     final String INFORMATION_ACCREDITE_DONNEES_ERONNEES        = "IADE_03";
+    
+    final String DEBUT_ENVOIE_KEY_SHARE = "DEKS_03";
+    final String FIN_ENVOIE_KEY_SHARE   = "FEKS_03";
+    
+    final String KEY_SHARE_ENREGISTREE_CORRECTEMENT = "KSEC_03";
+    final String KEY_SHARE_DONNEES_ERONNEES   = "KSDE_03";
+    
+    final String DEBUT_ENVOIE_CONFIRMATION_PARTAGE = "DECP_03";
+    final String FIN_ENVOIE_CONFIRMATION_PARTAGE = "FECP_03";
+    
+    final String DEMANDE_CONFIRMATION_DE_PARTAGE = "DCDP_03";
     //<=========================== FIN PARTAGE ACCES =========================>//
+    
+    /*                            ----------------                            */
+    
+    //<=========================== DEBUT "SYNCHRONIZATION" ==================>//
+    // Code de terminaison "04" correspond à la fonction "SYNCHRONIZER"
+    final String DEMANDE_SYNCHRONIZATION_APRES_PARTAGE_ACCES           = "DSAPA_04";
+    final String DEMANDE_SYNCHRONIZATION_APRES_PARTAGE_ACCES_AUTORISEE = "DSAPAA_04";
+    
+    final String DEBUT_ENVOIE_INFORMATION_ACCREDITEE = "DEIA_04";
+    final String FIN_ENVOIE_INFORMATION_ACCREDITEE   = "FEIA_04";
+    
+    final String INFORMATION_ACCREDITEE_ENREGISTRE_CORRECTEMENT  = "IAEC_04";
+    final String INFORMATION_ACCREDITEE_DONNEES_ERONEES          = "IADE_04";
+    
+    final String PREPARATION_ENREGISTREMENT_CLE_ACCES_ACCREDITEE  = "PECAA_04";
+    final String SESAME_PRET_ENREGISTRE_CLE_ACCES                 = "SPECA_04";
+    
+    final String DEBUT_ENVOIE_CLE_ACCES_ACCREDITEE = "DECAA_04";
+    final String FIN_ENVOIE_CLE_ACCES_ACCREDITEE   = "FECAA_04";
+    
+    final String CLE_ACCES_ACCREDITEE_ENREGISTREE_CORRECTEMENT = "CAAEC_04";
+    final String CLE_ACCES_ACCREDITEE_DONNEES_ERONNEES         = "CAADE_04";
+    //<=========================== FIN SYNCHRONIZATION=======================>//
     
     final String AUTRE_DEMANDE = "AD_01";
     final String MERCI = "MI_01";
